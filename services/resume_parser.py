@@ -3,6 +3,8 @@ import tempfile
 import fitz  # PyMuPDF
 import google.generativeai as genai
 from dotenv import load_dotenv
+from prompts.resume_parser_prompt import resume_parsing_prompt
+from utils.json_cleaner import extract_clean_json
 import json
 import re
 
@@ -34,41 +36,9 @@ def extract_text_from_pdf(file_bytes: bytes) -> str:
 
 
 def parse_resume_from_text(text: str) -> str:
-    prompt = f"""
-        You are a resume parsing assistant. Extract the following information from the resume:
-
-        Return clean, valid JSON only — no markdown, no explanation, no code block.
-
-        Format:
-        {{
-        "Full Name": "",
-        "Email": "",
-        "Phone Number": "",
-        "Total Years of Experience": "",
-        "Education": [
-            {{
-            "Degree": "",
-            "University": "",
-            "Graduation Year": ""
-            }}
-        ],
-        "Skills": [],
-        "Current Job Title": "",
-        "Current Location": ""
-        }}
-
-        Resume:
-        {text}
-        """
+    prompt = resume_parsing_prompt.format(text=text)
     try:
         response = model.generate_content(prompt)
-        cleaned = re.sub(r"```(?:json)?\n", "", response.text.strip())
-        cleaned = cleaned.replace("```", "").strip()
-        
-        # Optional: Remove any trailing non-JSON text (just in case)
-        first_brace = cleaned.find('{')
-        last_brace = cleaned.rfind('}')
-        json_string = cleaned[first_brace:last_brace+1]
-        return json.loads(json_string)
+        return extract_clean_json(response.text)
     except Exception as e:
         return f"Error: {e}"

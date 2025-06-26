@@ -1,6 +1,6 @@
 # app/main.py
 from fastapi import FastAPI
-from routers import summarizer, gemini_chat,resume_parser
+from routers import summarizer, gemini_chat,resume_parser,jd_matcher
 
 app = FastAPI(
     title="GenAI Mini Projects API",
@@ -12,6 +12,7 @@ app = FastAPI(
 app.include_router(summarizer.router, prefix="/summarize", tags=["Summarizer"])
 app.include_router(gemini_chat.router, prefix="/chat", tags=["Chat"])
 app.include_router(resume_parser.router, prefix="/resume", tags=["Resume Parsing"])
+app.include_router(jd_matcher.router, prefix="/jd", tags=["JD Matcher"])
 
 @app.get("/")
 async def root():
