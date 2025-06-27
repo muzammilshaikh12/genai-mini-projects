@@ -24,7 +24,7 @@ Each project is a standalone API (1–3 functions) with clean separation of logi
 
 1. Clone the repo
 
-git clone https://github.com/your-username/genai-mini-projects.git  
+git clone https://github.com/muzammilshaikh12/genai-mini-projects.git
 cd genai-mini-projects
 
 2. Install dependencies
